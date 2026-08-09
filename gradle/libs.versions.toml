@@ -2,19 +2,19 @@
 mod-version = "0.1.0"
 
 # Fabric (https://fabricmc.net/develop)
-jdk = "25"
-minecraft = "26.1.2"
-yarn-mappings = "1.21.11+build.3"
-fabric-loader = "0.19.2"
+jdk = "21"
+minecraft = "1.21.4"
+yarn-mappings = "1.21.4+build.2"
+fabric-loader = "0.16.10"
 
 # Loom (https://github.com/FabricMC/fabric-loom)
 loom = "1.16-SNAPSHOT"
 
 # Meteor (https://github.com/MeteorDevelopment/meteor-client/)
-meteor = "26.1.2-SNAPSHOT"
+meteor = "1.21.4-SNAPSHOT"
 
 # Baritone (https://github.com/MeteorDevelopment/baritone)
-baritone = "26.1-SNAPSHOT"
+baritone = "1.21.4-SNAPSHOT"
 
 # Mods
 
@@ -33,4 +33,4 @@ baritone = { module = "meteordevelopment:baritone", version.ref = "baritone" }
 # Mods
 
 [plugins]
-fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }
+fabric-loom = { id = "net.fabricmc.fabric-loom-remap", version.ref = "loom" }

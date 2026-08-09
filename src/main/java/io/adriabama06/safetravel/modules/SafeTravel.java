@@ -17,12 +17,12 @@ import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
-import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +58,13 @@ public class SafeTravel extends Module {
         .defaultValue(64)
         .min(1)
         .sliderRange(1, 256)
+        .build()
+    );
+
+    private final Setting<Boolean> useElytra = sgGeneral.add(new BoolSetting.Builder()
+        .name("use-elytra")
+        .description("Use the Elytra to fly to the target. When disabled, walk directly on foot to the target (skips the flight/landing phase).")
+        .defaultValue(true)
         .build()
     );
 
@@ -137,10 +144,17 @@ public class SafeTravel extends Module {
 
     @Override
     public void onActivate() {
-        if (mc.player == null || mc.level == null) return;
+        if (mc.player == null || mc.world == null) return;
 
         BlockPos target = targetPos.get();
         BlockPos baritoneTarget = getBaritoneTarget(target);
+
+        if (!useElytra.get()) {
+            info("Elytra disabled. Walking directly to target.");
+            setWalkingGoal(target);
+            transitionTo(State.WALKING);
+            return;
+        }
 
         if (isXZ()) {
             info("Starting elytra flight to X: %d, Z: %d (XZ mode - Y ignored)", target.getX(), target.getZ());
@@ -190,7 +204,7 @@ public class SafeTravel extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.player == null || mc.level == null) return;
+        if (mc.player == null || mc.world == null) return;
 
         switch (currentState) {
             case FLYING -> handleFlyingState();
@@ -217,7 +231,7 @@ public class SafeTravel extends Module {
      * @return {@code true} if the player is on the ground and not gliding.
      */
     private boolean isPlayerSettled() {
-        return mc.player.onGround() && !mc.player.isFallFlying();
+        return mc.player.isOnGround() && !mc.player.isGliding();
     }
 
     private boolean isXZ() {
@@ -232,7 +246,7 @@ public class SafeTravel extends Module {
      */
     private BlockPos getBaritoneTarget(BlockPos base) {
         if (isXZ() && mc.player != null) {
-            return new BlockPos(base.getX(), mc.player.blockPosition().getY(), base.getZ());
+            return new BlockPos(base.getX(), mc.player.getBlockPos().getY(), base.getZ());
         }
         return base;
     }
@@ -246,7 +260,7 @@ public class SafeTravel extends Module {
             int dz = playerPos.getZ() - target.getZ();
             return Math.sqrt((double) dx * dx + (double) dz * dz);
         } else {
-            return Math.sqrt(playerPos.distSqr(target));
+            return Math.sqrt(playerPos.getSquaredDistance(target));
         }
     }
 
@@ -260,7 +274,7 @@ public class SafeTravel extends Module {
             int dz = playerPos.getZ() - target.getZ();
             return (dx * dx + dz * dz) < radius * radius;
         } else {
-            return playerPos.closerThan(target, radius);
+            return playerPos.getSquaredDistance(target) < radius * radius;
         }
     }
 
@@ -304,7 +318,7 @@ public class SafeTravel extends Module {
         // Elytra process is inactive AND the player has been on the ground
         // (not fall-flying) for ~1 second → Baritone has finished landing.
         BlockPos target = targetPos.get();
-        BlockPos playerPos = mc.player.blockPosition();
+        BlockPos playerPos = mc.player.getBlockPos();
         double dist = distanceToTarget(playerPos, target);
         int radius = walkRadius.get();
 
@@ -377,7 +391,7 @@ public class SafeTravel extends Module {
         ticksInState++;
 
         BlockPos target = targetPos.get();
-        BlockPos playerPos = mc.player.blockPosition();
+        BlockPos playerPos = mc.player.getBlockPos();
 
         // Fast path: already on (or right on top of) the target → skip to
         // centering, no need to wait for Baritone to ever start pathing.
@@ -474,7 +488,7 @@ public class SafeTravel extends Module {
             return;
         }
 
-        BlockPos playerBlock = mc.player.blockPosition();
+        BlockPos playerBlock = mc.player.getBlockPos();
         double targetX = playerBlock.getX() + 0.5;
         double targetZ = playerBlock.getZ() + 0.5;
         double px = mc.player.getX();
@@ -487,8 +501,8 @@ public class SafeTravel extends Module {
 
         if (distH <= CENTER_TOLERANCE) {
             input.clearAllKeys();
-            var vel = mc.player.getDeltaMovement();
-            mc.player.setDeltaMovement(0, vel.y, 0);
+            var vel = mc.player.getMovement();
+            mc.player.setVelocity(new Vec3d(0, vel.y, 0));
             info("Centered on block.");
             finishArrival();
             return;
@@ -496,8 +510,8 @@ public class SafeTravel extends Module {
 
         // Look toward the center of the current block
         float targetYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
-        mc.player.setYRot(targetYaw);
-        mc.player.setXRot(0);
+        mc.player.setYaw(targetYaw);
+        mc.player.setPitch(0);
 
         // Walk forward while sneaking
         input.setInputForceState(Input.MOVE_FORWARD, true);
@@ -525,7 +539,7 @@ public class SafeTravel extends Module {
         
         if(!isSettedBoxingRefPosition) {
             isSettedBoxingRefPosition = true;
-            boxingRefPosition = mc.player.blockPosition();
+            boxingRefPosition = mc.player.getBlockPos();
             
             var input = baritone.getInputOverrideHandler();
             input.setInputForceState(Input.JUMP, true);
@@ -534,16 +548,16 @@ public class SafeTravel extends Module {
         BlockPos pPos = boxingRefPosition;
 
         BlockPos[] boxPositions = new BlockPos[] {
-            pPos.below(), pPos.below().north(),
+            pPos.down(), pPos.down().north(),
             pPos.north(), pPos.east(), pPos.south(), pPos.west(),
-            pPos.above().north(), pPos.above().east(), pPos.above().south(), pPos.above().west(),
-            pPos.above(2).west(), pPos.above(2)
+            pPos.up().north(), pPos.up().east(), pPos.up().south(), pPos.up().west(),
+            pPos.up(2).west(), pPos.up(2)
         };
 
         boolean finishedBuilding = true;
 
         for (BlockPos pos : boxPositions) {
-            if (mc.level.getBlockState(pos).isAir()) {
+            if (mc.world.getBlockState(pos).isAir()) {
                 BlockUtils.place(pos, block, true, 50);
                 finishedBuilding = false;
                 break;
