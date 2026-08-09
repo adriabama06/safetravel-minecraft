@@ -29,14 +29,10 @@ jobs:
 
       - name: Release Dev Build
         if: github.event_name != 'release'
-        uses: softprops/action-gh-release@v3
+        uses: actions/upload-artifact@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: snapshot
-          name: Dev Build
-          prerelease: true
-          files: |
-            ./build/libs/*.jar
+          name: Artifacts
+          path: build/libs/
 
       - name: Release
         if: github.event_name == 'release'
