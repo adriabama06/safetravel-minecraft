@@ -1,4 +1,4 @@
-package io.adriabama06.safefly.modules;
+package io.adriabama06.safetravel.modules;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.IBaritone;
@@ -30,7 +30,7 @@ import java.util.List;
 // Baritone movement-input enum (used to tap forward/back/left/right).
 import baritone.api.utils.input.Input;
 
-public class SafeFly extends Module {
+public class SafeTravel extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     public enum CoordinateMode {
@@ -131,7 +131,7 @@ public class SafeFly extends Module {
     // to build the cube. Block-center is at x+0.5, z+0.5.
     private static final double CENTER_TOLERANCE = 0.15;
 
-    public SafeFly(Category category) {
+    public SafeTravel(Category category) {
         super(category, "safe-fly", "Flies to a set of coordinates with Baritone and boxes yourself in Netherrack upon arrival or when you run out of fireworks.");
     }
 
@@ -453,7 +453,7 @@ public class SafeFly extends Module {
         if (buildBox.get()) {
             transitionTo(State.BOXING);
         } else {
-            info("Arrived. Box building disabled, disabling SafeFly.");
+            info("Arrived. Box building disabled, disabling SafeTravel.");
             toggle();
         }
     }
@@ -553,7 +553,7 @@ public class SafeFly extends Module {
         if (finishedBuilding) {
             isSettedBoxingRefPosition = false;
 
-            info("Player fully boxed in. Disabling SafeFly.");
+            info("Player fully boxed in. Disabling SafeTravel.");
             toggle();
         }
     }

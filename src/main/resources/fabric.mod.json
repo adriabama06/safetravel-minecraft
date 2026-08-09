@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "safefly",
+  "id": "safetravel",
   "version": "${version}",
-  "name": "SafeFly",
+  "name": "SafeTravel",
   "description": "Fly to a destination with the Elytra and Baritone, then get boxed in Netherrack for safety.",
   "authors": [
     "adriabama06"
   ],
   "contact": {
-    "sources": "https://github.com/adriabama06/safefly-minecraft"
+    "sources": "https://github.com/adriabama06/safetravel-minecraft"
   },
-  "icon": "assets/safefly/icon.png",
+  "icon": "assets/safetravel/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "io.adriabama06.safefly.SafeFlyAddon"
+      "io.adriabama06.safetravel.SafeTravelAddon"
     ]
   },
   "mixins": [
-    "safefly.mixins.json"
+    "safetravel.mixins.json"
   ],
   "custom": {
     "meteor-client:color": "225,25,25",

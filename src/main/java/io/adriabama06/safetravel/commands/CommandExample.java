@@ -1,4 +1,4 @@
-package io.adriabama06.safefly.commands;
+package io.adriabama06.safetravel.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

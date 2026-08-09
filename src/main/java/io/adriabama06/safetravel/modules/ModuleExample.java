@@ -1,6 +1,6 @@
-package io.adriabama06.safefly.modules;
+package io.adriabama06.safetravel.modules;
 
-import io.adriabama06.safefly.SafeFlyAddon;
+import io.adriabama06.safetravel.SafeTravelAddon;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.ColorSetting;
@@ -43,12 +43,12 @@ public class ModuleExample extends Module {
      * The {@code name} parameter should be in kebab-case.
      */
     public ModuleExample() {
-        super(SafeFlyAddon.CATEGORY, "world-origin", "An example module that highlights the center of the world.");
+        super(SafeTravelAddon.CATEGORY, "world-origin", "An example module that highlights the center of the world.");
     }
 
     /**
      * Example event handling method.
-     * Requires {@link SafeFlyAddon#getPackage()} to be setup correctly, otherwise the game will crash whenever the module is enabled.
+     * Requires {@link SafeTravelAddon#getPackage()} to be setup correctly, otherwise the game will crash whenever the module is enabled.
      */
     @EventHandler
     private void onRender3d(Render3DEvent event) {
