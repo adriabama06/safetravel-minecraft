@@ -139,7 +139,7 @@ public class SafeTravel extends Module {
     private static final double CENTER_TOLERANCE = 0.15;
 
     public SafeTravel(Category category) {
-        super(category, "safe-fly", "Flies to a set of coordinates with Baritone and boxes yourself in Netherrack upon arrival or when you run out of fireworks.");
+        super(category, "safe-travel", "Flies or walk to a set of coordinates with Baritone and boxes yourself in with blocks when the travel ends even if is canceled or has had an error.");
     }
 
     @Override
