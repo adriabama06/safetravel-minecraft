@@ -2,6 +2,7 @@ package io.adriabama06.safetravel;
 
 import io.adriabama06.safetravel.commands.CommandExample;
 import io.adriabama06.safetravel.hud.HudExample;
+import io.adriabama06.safetravel.modules.EBounce;
 import io.adriabama06.safetravel.modules.ModuleExample;
 import io.adriabama06.safetravel.modules.SafeTravel;
 import com.mojang.logging.LogUtils;
@@ -26,6 +27,7 @@ public class SafeTravelAddon extends MeteorAddon {
         // Modules
         Modules.get().add(new ModuleExample());
         Modules.get().add(new SafeTravel(CATEGORY));
+        Modules.get().add(new EBounce(CATEGORY));
 
         // Commands
         Commands.add(new CommandExample());
