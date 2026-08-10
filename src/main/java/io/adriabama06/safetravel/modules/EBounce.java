@@ -19,15 +19,19 @@ public class EBounce extends Module {
 
     private BounceState state = BounceState.HOLDING;
     private boolean prevOnGround = false;
+    private int jumpSpamTicks = 0;
+    private boolean spamPressed = false;
 
     public EBounce(Category category) {
-        super(category, "e-bounce", "Sprints and walks forward while keeping JUMP pressed. When the player touches the floor, JUMP is released the tick after and pressed again the tick after that.");
+        super(category, "e-bounce", "Elytra Bounce, but legit mode simulating player keyboard.");
     }
 
     @Override
     public void onActivate() {
         state = BounceState.HOLDING;
         prevOnGround = false;
+        jumpSpamTicks = 0;
+        spamPressed = false;
     }
 
     @Override
@@ -43,23 +47,37 @@ public class EBounce extends Module {
 
         boolean onGround = mc.player.isOnGround();
         boolean touchedFloor = onGround && !prevOnGround;
+        boolean leftGround = !onGround && prevOnGround;
         prevOnGround = onGround;
 
+        if (leftGround) {
+            jumpSpamTicks = 5;
+            spamPressed = false;
+        }
+
+        boolean holdJump = false;
         switch (state) {
             case HOLDING -> {
                 if (touchedFloor) state = BounceState.RELEASING;
-                setKey(mc.options.jumpKey, true);
+                holdJump = true;
             }
             case RELEASING -> {
-                setKey(mc.options.jumpKey, false);
+                holdJump = false;
                 state = BounceState.RESUMING;
             }
             case RESUMING -> {
-                setKey(mc.options.jumpKey, true);
+                holdJump = true;
                 state = BounceState.HOLDING;
             }
         }
 
+        if (jumpSpamTicks > 0) {
+            jumpSpamTicks--;
+            holdJump = spamPressed;
+            spamPressed = !spamPressed;
+        }
+
+        setKey(mc.options.jumpKey, holdJump);
         setKey(mc.options.sprintKey, true);
         setKey(mc.options.forwardKey, true);
     }
