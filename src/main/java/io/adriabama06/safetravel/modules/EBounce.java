@@ -5,7 +5,7 @@ import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.input.Input;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.KeyMapping;
 
 public class EBounce extends Module {
     private enum BounceState {
@@ -36,16 +36,16 @@ public class EBounce extends Module {
 
     @Override
     public void onDeactivate() {
-        setKey(mc.options.jumpKey, false);
-        setKey(mc.options.sprintKey, false);
-        setKey(mc.options.forwardKey, false);
+        setKey(mc.options.keyJump, false);
+        setKey(mc.options.keySprint, false);
+        setKey(mc.options.keyUp, false);
     }
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.player == null || mc.world == null) return;
+        if (mc.player == null || mc.level == null) return;
 
-        boolean onGround = mc.player.isOnGround();
+        boolean onGround = mc.player.onGround();
         boolean touchedFloor = onGround && !prevOnGround;
         boolean leftGround = !onGround && prevOnGround;
         prevOnGround = onGround;
@@ -77,13 +77,13 @@ public class EBounce extends Module {
             spamPressed = !spamPressed;
         }
 
-        setKey(mc.options.jumpKey, holdJump);
-        setKey(mc.options.sprintKey, true);
-        setKey(mc.options.forwardKey, true);
+        setKey(mc.options.keyJump, holdJump);
+        setKey(mc.options.keySprint, true);
+        setKey(mc.options.keyUp, true);
     }
 
-    private void setKey(KeyBinding key, boolean pressed) {
-        key.setPressed(pressed);
+    private void setKey(KeyMapping key, boolean pressed) {
+        key.setDown(pressed);
         Input.setKeyState(key, pressed);
     }
 }

@@ -22,14 +22,13 @@ repositories {
 dependencies {
     // Fabric
     minecraft(libs.minecraft)
-    mappings(libs.yarn)
-    modImplementation(libs.fabric.loader)
+    implementation(libs.fabric.loader)
 
     // Meteor
-    modImplementation(libs.meteor.client)
+    implementation(libs.meteor.client)
 
     // Baritone API
-    modImplementation(libs.baritone)
+    implementation(libs.baritone)
 }
 
 java {
