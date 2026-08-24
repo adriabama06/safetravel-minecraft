@@ -1,15 +1,10 @@
 package io.adriabama06.safetravel;
 
-import io.adriabama06.safetravel.commands.CommandExample;
-import io.adriabama06.safetravel.hud.HudExample;
 import io.adriabama06.safetravel.modules.EBounce;
-import io.adriabama06.safetravel.modules.ModuleExample;
 import io.adriabama06.safetravel.modules.SafeTravel;
 import com.mojang.logging.LogUtils;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
-import meteordevelopment.meteorclient.commands.Commands;
-import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
@@ -25,15 +20,8 @@ public class SafeTravelAddon extends MeteorAddon {
         LOG.info("Initializing SafeTravel Addon");
 
         // Modules
-        Modules.get().add(new ModuleExample());
         Modules.get().add(new SafeTravel(CATEGORY));
         Modules.get().add(new EBounce(CATEGORY));
-
-        // Commands
-        Commands.add(new CommandExample());
-
-        // HUD
-        Hud.get().register(HudExample.INFO);
     }
 
     @Override
