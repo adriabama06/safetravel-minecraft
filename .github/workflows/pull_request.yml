@@ -23,6 +23,15 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Rename JAR with Branch Name
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref_name }}" | tr '/' '-')
+          for jar in build/libs/*.jar; do
+            if [[ "$(basename "$jar")" != *"-${BRANCH_NAME}.jar" ]]; then
+              mv "$jar" "build/libs/$(basename "$jar" .jar)-${BRANCH_NAME}.jar"
+            fi
+          done
+
       - name: Release
         uses: actions/upload-artifact@v7
         with:
