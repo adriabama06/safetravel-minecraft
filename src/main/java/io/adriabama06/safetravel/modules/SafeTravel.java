@@ -32,6 +32,7 @@ import baritone.api.utils.input.Input;
 
 public class SafeTravel extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgBoxing = settings.createGroup("Boxing");
 
     public enum CoordinateMode {
         XYZ,
@@ -68,21 +69,21 @@ public class SafeTravel extends Module {
         .build()
     );
 
-    private final Setting<Boolean> autoAdjust = sgGeneral.add(new BoolSetting.Builder()
+    private final Setting<Boolean> autoAdjust = sgBoxing.add(new BoolSetting.Builder()
         .name("auto-adjust")
-        .description("After landing, walk/center to the exact target block if Baritone lands a bit further away.")
+        .description("After landing, walk/center to the exact target block if Baritone lands a bit off the block center.")
         .defaultValue(true)
         .build()
     );
 
-    private final Setting<Boolean> buildBox = sgGeneral.add(new BoolSetting.Builder()
+    private final Setting<Boolean> buildBox = sgBoxing.add(new BoolSetting.Builder()
         .name("build-box")
         .description("Build a box around you upon arrival.")
         .defaultValue(true)
         .build()
     );
 
-    private final Setting<List<Item>> boxItems = sgGeneral.add(new ItemListSetting.Builder()
+    private final Setting<List<Item>> boxItems = sgBoxing.add(new ItemListSetting.Builder()
         .name("box-items")
         .description("Items used to build the box (the first one found in your hotbar is used).")
         .defaultValue(Collections.singletonList(Items.NETHERRACK))
